@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.3
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 08, 2022 at 06:14 PM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.29
+-- Generation Time: Dec 14, 2022 at 10:50 PM
+-- Server version: 10.4.25-MariaDB
+-- PHP Version: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `esports_website`
+-- Database: `jerseyshoredb`
 --
 
 -- --------------------------------------------------------
@@ -56,8 +56,23 @@ CREATE TABLE `brand` (
 --
 
 INSERT INTO `brand` (`Brand_ID`, `Brand_Name`) VALUES
-(1, 'Nike '),
-(2, 'Head');
+(1, 'Ashley'),
+(2, 'Ethan Allen'),
+(3, 'Crate & Barrel'),
+(4, 'West Elm'),
+(5, 'Wayfair');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart`
+--
+
+CREATE TABLE `cart` (
+  `id` int(11) NOT NULL,
+  `cust_id` int(11) NOT NULL,
+  `Product_Id` int(12) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -75,8 +90,11 @@ CREATE TABLE `category` (
 --
 
 INSERT INTO `category` (`Category_ID`, `Category_Name`) VALUES
-(1, 'Tennis '),
-(2, 'Golf');
+(1, 'Bedroom Furniture'),
+(2, 'Dinning Room'),
+(3, 'Patio'),
+(4, 'Storage'),
+(5, 'Family Room');
 
 -- --------------------------------------------------------
 
@@ -100,7 +118,8 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`Cust_ID`, `First_Name`, `Last_Name`, `Email`, `Address`, `Phone_Number`, `Login_ID`, `Password`) VALUES
-(1, 'yamini', 'chitikela', 'yaminichitikela@gmail.com', '13frank', 551358542, 'yamini', 'e10adc3949ba59abbe56e057f20f883e');
+(1, 'yamini', 'chitikela', 'yaminichitikela@gmail.com', '13frank', 551358542, 'yamini', 'e10adc3949ba59abbe56e057f20f883e'),
+(2, 'Makarand', 'Agte', 'mack@email.com', '333 main str jersey nj 90909', 2147483647, 'mack', 'cfeb114b3fc6c4c1e23af6be9cc183e3');
 
 -- --------------------------------------------------------
 
@@ -118,6 +137,13 @@ CREATE TABLE `employee` (
   `Is_Manager` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `employee`
+--
+
+INSERT INTO `employee` (`Employee_ID`, `First_Name`, `Last_Name`, `Email`, `Login_ID`, `Password`, `Is_Manager`) VALUES
+(123434, 'Makarand', 'Agte', 'mack@mail.com', 'mack', 'cfeb114b3fc6c4c1e23af6be9cc183e3', 0);
+
 -- --------------------------------------------------------
 
 --
@@ -132,6 +158,24 @@ CREATE TABLE `orderdetail` (
   `Price` decimal(12,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `orderdetail`
+--
+
+INSERT INTO `orderdetail` (`Order_Detail_ID`, `Order_ID`, `Product_ID`, `quantity`, `Price`) VALUES
+(49, 21, 1, 4, '250'),
+(50, 21, 4, 1, '900'),
+(51, 21, 8, 1, '234'),
+(52, 22, 1, 4, '250'),
+(53, 22, 4, 1, '900'),
+(54, 22, 8, 1, '234'),
+(55, 23, 1, 1, '250'),
+(56, 23, 4, 2, '900'),
+(57, 24, 1, 1, '250'),
+(58, 24, 8, 1, '234'),
+(59, 24, 10, 1, '1200'),
+(60, 24, 9, 2, '2300');
+
 -- --------------------------------------------------------
 
 --
@@ -140,8 +184,20 @@ CREATE TABLE `orderdetail` (
 
 CREATE TABLE `orders` (
   `Order_ID` int(12) NOT NULL,
-  `Cust_ID` int(12) NOT NULL
+  `Cust_ID` int(12) NOT NULL,
+  `orderdate` date NOT NULL,
+  `invoicenumber` int(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`Order_ID`, `Cust_ID`, `orderdate`, `invoicenumber`) VALUES
+(21, 2, '2022-12-14', 81047),
+(22, 2, '2022-12-14', 26751),
+(23, 2, '2022-12-14', 57947),
+(24, 2, '2022-12-14', 53638);
 
 -- --------------------------------------------------------
 
@@ -164,7 +220,12 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`Product_ID`, `Name`, `brand_id`, `Price`, `category_id`, `Quantity`, `Images`) VALUES
-(1, 'Product 1', 1, '123', 1, 3, 'pictures/bat.png');
+(1, 'Coffee Table', 4, '250', 2, 164, 'COFFEE TABEL 2.png'),
+(4, 'Hammock', 3, '900', 3, 80, 'HAMMOCK 1.png'),
+(8, 'mackarand', 1, '234', 1, 6, 'DINNIG CHAIR 2.png'),
+(9, 'King Size Bed', 1, '2300', 1, 98, 'BED 1.png'),
+(10, 'Dining Table with Chair', 2, '1200', 2, 99, 'DINNIG CHAIR 1.png'),
+(11, 'Outdoor patio Sofa', 5, '490', 3, 100, 'OUTDOOR CHAIR 1.png');
 
 --
 -- Indexes for dumped tables
@@ -181,6 +242,14 @@ ALTER TABLE `admin`
 --
 ALTER TABLE `brand`
   ADD PRIMARY KEY (`Brand_ID`);
+
+--
+-- Indexes for table `cart`
+--
+ALTER TABLE `cart`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_Cust_id` (`cust_id`),
+  ADD KEY `FK_Product_Id` (`Product_Id`);
 
 --
 -- Indexes for table `category`
@@ -238,42 +307,61 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `brand`
 --
 ALTER TABLE `brand`
-  MODIFY `Brand_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `Brand_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `cart`
+--
+ALTER TABLE `cart`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-  MODIFY `Category_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `Category_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `Cust_ID` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Cust_ID` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `orderdetail`
 --
 ALTER TABLE `orderdetail`
-  MODIFY `Order_Detail_ID` int(12) NOT NULL AUTO_INCREMENT;
+  MODIFY `Order_Detail_ID` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `Order_ID` int(12) NOT NULL AUTO_INCREMENT;
+  MODIFY `Order_ID` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT for table `product`
+--
+ALTER TABLE `product`
+  MODIFY `Product_ID` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
 --
 
 --
+-- Constraints for table `cart`
+--
+ALTER TABLE `cart`
+  ADD CONSTRAINT `FK_Cust_id` FOREIGN KEY (`cust_id`) REFERENCES `customer` (`Cust_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_Product_Id` FOREIGN KEY (`Product_Id`) REFERENCES `product` (`Product_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
 -- Constraints for table `orderdetail`
 --
 ALTER TABLE `orderdetail`
-  ADD CONSTRAINT `Product_ID_FK` FOREIGN KEY (`Product_ID`) REFERENCES `product` (`Product_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `order_ID_FK` FOREIGN KEY (`Order_ID`) REFERENCES `orders` (`Order_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `order_ID_FK` FOREIGN KEY (`Order_ID`) REFERENCES `orders` (`Order_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `product_ID_FK` FOREIGN KEY (`Product_ID`) REFERENCES `product` (`Product_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `orders`
